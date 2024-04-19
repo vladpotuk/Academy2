@@ -1,3 +1,5 @@
+USE Academy;
+
 SELECT Building
 FROM Departments
 GROUP BY Building
