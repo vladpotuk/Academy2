@@ -1,0 +1,97 @@
+CREATE DATABASE Academy;
+GO
+
+USE Academy;
+GO
+
+CREATE TABLE Curators (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(MAX) NOT NULL,
+    Surname NVARCHAR(MAX) NOT NULL
+);
+GO
+
+CREATE TABLE Departments (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Building INT NOT NULL CHECK (Building BETWEEN 1 AND 5),
+    Financing MONEY NOT NULL DEFAULT 0,
+    Name NVARCHAR(100) NOT NULL UNIQUE,
+    FacultyId INT NOT NULL,
+    FOREIGN KEY (FacultyId) REFERENCES Faculties(Id)
+);
+GO
+
+CREATE TABLE Faculties (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL UNIQUE
+);
+GO
+
+CREATE TABLE Groups (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(10) NOT NULL UNIQUE,
+    Year INT NOT NULL CHECK (Year BETWEEN 1 AND 5),
+    DepartmentId INT NOT NULL,
+    FOREIGN KEY (DepartmentId) REFERENCES Departments(Id)
+);
+GO
+
+CREATE TABLE GroupsCurators (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    CuratorId INT NOT NULL,
+    GroupId INT NOT NULL,
+    FOREIGN KEY (CuratorId) REFERENCES Curators(Id),
+    FOREIGN KEY (GroupId) REFERENCES Groups(Id)
+);
+GO
+
+CREATE TABLE Lectures (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Date DATE NOT NULL CHECK (Date <= GETDATE()),
+    SubjectId INT NOT NULL,
+    TeacherId INT NOT NULL,
+    FOREIGN KEY (SubjectId) REFERENCES Subjects(Id),
+    FOREIGN KEY (TeacherId) REFERENCES Teachers(Id)
+);
+GO
+
+CREATE TABLE Students (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(MAX) NOT NULL,
+    Rating INT NOT NULL CHECK (Rating BETWEEN 0 AND 5),
+    Surname NVARCHAR(MAX) NOT NULL
+);
+GO
+
+CREATE TABLE Subjects (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL UNIQUE
+);
+GO
+
+CREATE TABLE Teachers (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    IsProfessor BIT NOT NULL DEFAULT 0,
+    Name NVARCHAR(MAX) NOT NULL,
+    Salary MONEY NOT NULL CHECK (Salary > 0),
+    Surname NVARCHAR(MAX) NOT NULL
+);
+GO
+
+CREATE TABLE GroupsLectures (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    GroupId INT NOT NULL,
+    LectureId INT NOT NULL,
+    FOREIGN KEY (GroupId) REFERENCES Groups(Id),
+    FOREIGN KEY (LectureId) REFERENCES Lectures(Id)
+);
+GO
+
+CREATE TABLE GroupsStudents (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    GroupId INT NOT NULL,
+    StudentId INT NOT NULL,
+    FOREIGN KEY (GroupId) REFERENCES Groups(Id),
+    FOREIGN KEY (StudentId) REFERENCES Students(Id)
+);
+GO
